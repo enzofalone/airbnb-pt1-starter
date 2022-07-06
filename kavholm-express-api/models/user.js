@@ -77,7 +77,7 @@ class User {
     )
     const user = userResult.rows[0]
 
-    return user
+    return this.makePublicUser(user)
   }
 
   static async fetchUserByEmail(email) {
@@ -91,7 +91,11 @@ class User {
 
     const user = result.rows[0]
 
-    return user
+    // check if the result is valid
+    if(result?.rows[0]?.email) {
+      const user = result.rows[0]
+      return user;
+    }
   }
 
   static async fetchUserByUsername(username) {
@@ -103,9 +107,11 @@ class User {
 
     const result = await db.query(query, [username.toLowerCase()])
 
-    const user = result.rows[0]
-
-    return user
+    // check if result is valid
+    if(result?.rows[0]?.username) {
+      const user = result.rows[0]
+      return user;
+    }
   }
 }
 

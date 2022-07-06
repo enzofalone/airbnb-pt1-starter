@@ -15,10 +15,62 @@ afterEach(commonAfterEach)
 afterAll(commonAfterAll)
 
 describe("Booking", () => {
+  describe("Test createBooking", () => {
+    test("Can create a new booking with valid params", async() => {
+      // dummy data
+      const user = { username: "jlo" }
+      const listingId = testListingIds[2];
+      const listing = await Listing.fetchListingById(listingId);
+      const newBooking = {
+        startDate: new Date('01-01-2022'), 
+        endDate: new Date('01-01-2023'), 
+        guests: 5
+      };
+
+      // request 
+      const booking = await Booking.createBooking({newBooking, listing, user});
+      
+      // comparison
+      expect(booking).toEqual({
+        id: expect.any(Number),
+        startDate: newBooking.startDate,
+        endDate: newBooking.endDate,
+        hostUsername: expect.any(String),
+        totalCost: expect.any(String),
+        paymentMethod: expect.any(String),
+        guests: expect.any(Number),
+        listingId: expect.any(Number),
+        userId: expect.any(Number),
+        username: user.username,
+        createdAt: expect.any(Date)
+      })
+      
+    })
+
+    test("Throws error with invalid params", async() => {
+      expect.assertions(1);
+      // dummy data
+      const user = { username: "jlo" };
+      const listingId = testListingIds[1];
+      const listing = await Listing.fetchListingById(listingId);
+      const newBooking = { 
+        endDate: new Date('01-01-2023'), 
+      }
+
+      try {
+        // request
+        const booking = await Booking.createBooking({newBooking, listing, user});
+      } catch (error) {
+        // expect
+        expect(error instanceof BadRequestError).toBeTruthy();
+      }
+    });
+  })
+
   describe("Test listBookingsFromUser", () => {
     test("Fetches all of the authenticated users' bookings", async () => {
       const user = { username: "jlo" }
-      const listingId = testListingIds[0]
+      const listingId = testListingIds[0];
       const listing = await Listing.fetchListingById(listingId)
 
       const bookings = await Booking.listBookingsFromUser(user)

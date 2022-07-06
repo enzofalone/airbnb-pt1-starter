@@ -5,7 +5,7 @@ const createListings = async (userIds) => {
   const thirdUserId = userIds[2]
 
   if (!secondUserId || !thirdUserId) {
-    throw new Error(`No second or third id found in ${userIds.join(", ")}`)
+    throw new BadRequestError(`No second or third id found in ${userIds.join(", ")}`)
   }
 
   await db.query(`
